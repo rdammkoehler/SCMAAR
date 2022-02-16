@@ -1,3 +1,2 @@
 def test_canary():
-	assert True, "The Canary is dead!"
-
+    assert True, "The Canary is dead!"
