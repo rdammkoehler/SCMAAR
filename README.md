@@ -58,6 +58,7 @@ Add additional notes about how to deploy this on a live system
 ## Built With
 
 * [pytest](https://docs.pytest.org/en/7.0.x/) - Test Tool Used
+* [pylint](https://pylint.org/) - The Linter Used
 
 ## Contributing
 
