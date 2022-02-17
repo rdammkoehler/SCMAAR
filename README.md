@@ -38,6 +38,21 @@ End with an example of getting some data out of the system or using it for a lit
 ## Running the tests
 
 Explain how to run the automated tests for this system
+### Microtests
+
+Written in Python, executed with `pytest`
+
+```sh
+pytest
+```
+
+### Acceptance/Story Tests
+
+Written in Gherkin, executed with `Behave`
+
+```sh
+behave --no-capture --no-capture-stderr --no-logcapture
+```
 
 ### Break down into end to end tests
 
@@ -62,6 +77,7 @@ Add additional notes about how to deploy this on a live system
 ## Built With
 
 * [argparse](https://docs.python.org/3/library/argparse.html) - For the CLI
+* [Behave](https://behave.readthedocs.io/en/stable/) - BDD Testing Tool Used
 * [pytest](https://docs.pytest.org/en/7.0.x/) - Test Tool Used
 * [pylint](https://pylint.org/) - The Linter Used
 
