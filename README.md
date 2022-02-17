@@ -1,6 +1,10 @@
 # SCMAAR
 Source Control Management Analysis and Reporting
 
+## Usage
+
+`scmaar {dir}` 
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
@@ -57,6 +61,7 @@ Add additional notes about how to deploy this on a live system
 
 ## Built With
 
+* [argparse](https://docs.python.org/3/library/argparse.html) - For the CLI
 * [pytest](https://docs.pytest.org/en/7.0.x/) - Test Tool Used
 * [pylint](https://pylint.org/) - The Linter Used
 
