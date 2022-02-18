@@ -38,7 +38,7 @@ End with an example of getting some data out of the system or using it for a lit
 ## Running the tests
 
 Explain how to run the automated tests for this system
-### Microtests
+### Micro-tests
 
 Written in Python, executed with `pytest`
 
@@ -54,7 +54,7 @@ Written in Gherkin, executed with `Behave`
 behave --no-capture --no-capture-stderr --no-logcapture
 ```
 
-### Break down into end to end tests
+### Break down into end-to-end tests
 
 Explain what these tests test and why
 
