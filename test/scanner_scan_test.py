@@ -1,5 +1,6 @@
-from datetime import datetime
 from os import path
+from random import randint
+from re import search
 from tempfile import TemporaryFile, TemporaryDirectory
 
 import pytest
@@ -8,25 +9,33 @@ from git import Repo
 from scmaar.scanner import scan
 
 
+def helper_add_file(repo, filename=str(randint(0, 1000)), content='file'):
+    filepath = path.join(repo.working_tree_dir, filename)
+    with open(filepath, mode='w', encoding='utf-8') as file:
+        file.write(content)
+    repo.index.add([filepath])
+    repo.index.commit(filename)
+
+
 def helper_add_readme(repo):
-    readme_path = path.join(repo.working_tree_dir, 'README.md')
-    with open(readme_path, 'w', encoding='utf-8') as readme:
-        readme.write('# SCMAAR Test Repo!')
-    repo.index.add([readme_path])
-    repo.index.commit('testing')
+    helper_add_file(repo, 'README.md', '# SCMAAR Test Repo!')
 
 
 class RepositoryContext:
     """
     A Repository Context object for testing
     """
-    def __init__(self):
+
+    def __init__(self, commit_count=1):
         # pylint: disable=R1732
         self.temp_dir = TemporaryDirectory()
         self.repo = Repo.init(self.temp_dir.name)
+        helper_add_readme(self.repo)
+        if commit_count:
+            for _ in range(1, commit_count):
+                helper_add_file(self.repo)
 
     def __enter__(self):
-        helper_add_readme(self.repo)
         return self
 
     def __exit__(self, type_, value, traceback):
@@ -67,12 +76,28 @@ def test_scan_reports_on_repo():
 
 
 def test_scan_report_contains_last_updated_datetime():
-    now = datetime.now().replace(microsecond=0)
     with RepositoryContext() as test_repo:
-        assert f'Last Updated: {now}' in scan(test_repo.temp_dir.name)
+        updated_pattern = r'Last Updated: \d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}(\+|-)\d{2}:\d{2}'
+        assert search(updated_pattern, scan(test_repo.temp_dir.name)), 'Last Updated date not found'
 
 
 def test_scan_report_contains_last_authored_datetime():
-    now = datetime.now().replace(microsecond=0)
     with RepositoryContext() as test_repo:
-        assert f'Last Authored: {now}' in scan(test_repo.temp_dir.name)
+        authored_pattern = r'Last Authored: \d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}(\+|-)\d{2}:\d{2}'
+        assert search(authored_pattern, scan(test_repo.temp_dir.name)), 'Last Authored date not found'
+
+
+def test_commit_is_reported():
+    with RepositoryContext() as test_repo:
+        report = scan(test_repo.temp_dir.name)
+
+        assert search(r'Commit [0-9a-z]{40}', report)
+        assert "\t{'insertions': 1, 'deletions': 0, 'lines': 1, 'files': 1}" in report
+        assert search('size \d+ bytes', report), 'Size of commit not found in report'
+
+
+def test_each_commit_is_reported():
+    with RepositoryContext(commit_count=2) as test_repo:
+        report = scan(test_repo.temp_dir.name)
+
+        assert report.count('Commit ') == 2
