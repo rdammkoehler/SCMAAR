@@ -93,7 +93,7 @@ def test_commit_is_reported():
 
         assert search(r'Commit [0-9a-z]{40}', report)
         assert "\t{'insertions': 1, 'deletions': 0, 'lines': 1, 'files': 1}" in report
-        assert search('size \d+ bytes', report), 'Size of commit not found in report'
+        assert search(r'size \d+ bytes', report), 'Size of commit not found in report'
 
 
 def test_each_commit_is_reported():
